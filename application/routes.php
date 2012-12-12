@@ -34,17 +34,20 @@
 
 Route::get('/', function()
 {
+	$content = Content::where('active', '=', 1)->get();
+
+	$banners = array();
+	
+	foreach ($content as $banner)
+	{
+		$banners[] = array(
+			'title'      => '/images/'.$banner->title,
+			'background' => '/images/'.$banner->background,
+		);
+	} 
+
 	return View::make('home.index')
-		->with('banners', array(
-			array(
-				'background' => 'images/bg_home.jpg',
-				'title'		 => 'images/contenido_home.png',
-			),
-			array(
-				'background' => 'images/bg_ventajas.jpg',
-				'title'      => 'images/digitalon.png',
-			), 
-		));
+		->with('banners', $banners);
 });
 
 /*
@@ -61,7 +64,6 @@ Route::get('admin/login', function()
 
 Route::post('admin/login', function()
 {
-	 // get POST data
     $credentials = array(
     	'username' => Input::get('username'),
    		'password' => Input::get('password'),
@@ -69,16 +71,12 @@ Route::post('admin/login', function()
 
     if ( Auth::attempt($credentials) )
     {
-        // we are now logged in, go to home
         return Redirect::to('admin/pages');
     }
     else
     {
-        // auth failure! lets go back to the login
         return Redirect::to('admin/login')
             ->with('login_errors', true);
-        // pass any error notification you want
-        // i like to do it this way  
     }
 });
 
@@ -92,21 +90,71 @@ Route::get('admin/logout', function()
 
 Route::get('admin/pages', array('before' => 'auth', 'do' => function() 
 {
-	return View::make('pages.index');
+	$content = Content::all();
+
+	return View::make('pages.index')
+		->with('content', $content);
 }));
+
+Route::get('admin/pages/create', array('before' => 'auth', 'do' => function() 
+{
+	return View::make('pages.create');
+}));
+
 
 Route::get('admin/pages/(:num)', array('before' => 'auth', 'do' => function($id) 
 {
-	return View::make('pages.edit');
-}));	
+	$content = Content::find($id);
+
+	return View::make('pages.edit')
+		->with('banner', $content);
+}));
+
+Route::get('admin/pages/(:num)/remove', array('before' => 'auth', 'do' => function($id) 
+{
+	$content = Content::find($id);
+
+	$content->active = ($content->active == 1 ? 0 : 1);
+
+	$content->save();
+
+	Session::flash('status_success', 'Banner desactivado');
+
+	return Redirect::to('admin/pages');
+}));		
 
 Route::post('admin/pages/upload', array('before' => 'auth', 'do' => function()
 {
-	$filename = Input::file('background.name');
-	$uploaded_background = Input::upload('background', 'uploads', $filename);
+	$background = Input::file('background.name');
+	$title      = Input::file('content.name');
 
-	$filename = Input::file('content.name');
-	$uploaded_content = Input::upload('content', 'uploads', $filename);
+	if (Input::get('banner'))
+	{
+		$content = Content::find(Input::get('banner'));
+	}
+	else
+	{
+		$content = new Content;
+	}	
+
+	$uploaded_content	 = true;
+	$uploaded_background = true;
+
+	if ($title)
+	{
+		$content->title = $title;
+		$uploaded_content = Input::upload('content', 'public/images/banners', $title);
+	}
+
+	if ($background)
+	{
+		$content->background = $background;
+		$uploaded_background = Input::upload('background', 'public/images/banners', $background);
+	}
+
+	$content->name = Input::get('name');
+
+	$content->save();
 
 	if ($uploaded_content AND $uploaded_background) 
 	{
@@ -134,6 +182,19 @@ Route::get('admin/users/create', array('before' => 'auth', 'do' => function()
 {
 	return View::make('users.create');
 }));
+
+Route::get('admin/users/(:num)/remove', array('before' => 'auth', 'do' => function($id) 
+{
+	$user = User::find($id);
+
+	$user->active = ($user->active == 1 ? 0 : 1);
+
+	$user->save();
+
+	Session::flash('status_success', 'Usuario desactivado');
+
+	return Redirect::to('admin/users');
+}));		
 
 Route::post('admin/users/create', array('before' => 'auth', 'do' => function() 
 {

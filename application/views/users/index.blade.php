@@ -32,11 +32,7 @@
 							<td>{{ $user->username }}</td>							
 							<td>{{ $user->email }}</td>
 							<td>
-								@if ($user->active)
-									{{ HTML::link('admin/users/'.$user->id, 'Si') }}
-								@else
-									{{ HTML::link('admin/users/'.$user->id, 'No') }}
-								@endif
+								{{ HTML::link('admin/users/'.$user->id.'/remove', ($user->active ? 'Si' : 'No')) }}
 							</td>
 						</tr>
 					@endforeach

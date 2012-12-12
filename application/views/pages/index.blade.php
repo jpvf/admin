@@ -4,7 +4,7 @@
 	<div class="row">
 		<div class="span12">
 			<div class="page-header">
-				<h2>Colores <small>(Edicion)</small></h2>
+				<h2>Banners</small></h2>
 			</div>
 
 			<div class="toolbar">
@@ -18,20 +18,28 @@
 				<thead>
 					<tr>
 						<th>Nombre</th>
-						<th>Posición</th>
+						<th>Fondo</th>
+						<th>Contenido</th>
 						<th>Activo</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>
-							{{ HTML::link('admin/pages/1', 'Colores varios') }}
-						</td>
-						<td>1</td>
-						<td>
-							{{ HTML::link('admin/pages/1', 'Si') }}
-						</td>
-					</tr>
+					@foreach ($content as $banner)
+						<tr>
+							<td>
+								{{ HTML::link('admin/pages/'.$banner->id, $banner->name) }}
+							</td>
+							<td>
+								{{ $banner->background }}
+							</td>
+							<td>
+								{{ $banner->title }}
+							</td>
+							<td>
+								{{ HTML::link('admin/pages/'.$banner->id.'/remove', ($banner->active ? 'Si' : 'No')) }}
+							</td>
+						</tr>
+					@endforeach
 				</tbody>
 			</table>
 

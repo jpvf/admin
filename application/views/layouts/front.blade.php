@@ -404,20 +404,19 @@
 
 <div class="page section-1" id='s1'>
 
-	@for ($i = 0; $i < count($banners); $i++)
-
-	    <div class="page-content banners height cover-background" data-image='{{ $banners[$i]['background'] }}'>
+	<div class="page-content banners height cover-background" style="top:0px;position:relative;z-index:-9999"  data-image='{{ $banners[0]['background'] }}'>
 
 	        <article>
 
-	            <h1 data-stellar-ratio="0.2">
-	            	<img src="{{ $banners[$i]['title'] }}">
+	            <h1 data-stellar-ratio="0.2" style='top:20px !important;'>
+	            	<img src="{{ $banners[0]['title'] }}">
 	            </h1>
 
 	        </article>
 
 	    </div>
-	@endfor
+
+	
 </div>
 <style type="text/css">
 
@@ -2065,14 +2064,16 @@ disposición del cliente más importante de impresión flexográfica del país</
 
          }());
 
-
-
         new RibbonMenu;
 
-        var banners = $('.banners'), at = 0, total = banners.length;
+        var banners = $('.banners'), 
+        	images = {{ json_encode($banners) }},
+        	at = 0, 
+        	total = images.length;
 
-        banners.css('margin', -233333333);
         banners.eq(0).show();
+        
+        console.log(images)
 
         var interval = setInterval(function() {
         	at++;
@@ -2080,17 +2081,12 @@ disposición del cliente más importante de impresión flexográfica del país</
         	if (total <= at) {
         		at = 0;
         	}
-        	
-        	banners.fadeOut(200, function(){
-        		banners.eq(at).fadeIn(200);
-        	});     
+        	console.log(images[at])
 
-        	banners.eq(at).find('h1').css({
-        		top: 20
-        	})   	
+    		banners.find('h1').find('img').attr('src', images[at].title);
+    		banners.find('.backstretch').find('img').attr('src', images[at].background);
 
         }, 10000);
-
     });
 
 </script>
