@@ -68,11 +68,11 @@ return array(
 		),
 
 		'mysql' => array(
-			'driver'   => 'sqlite',
-			'host'     => 'localhost',
+			'driver'   => 'mysql',
+			'host'     => 'tunnel.pagodabox.com:3306',
 			'database' => 'zetta',
-			'username' => 'root',
-			'password' => '',
+			'username' => 'robena',
+			'password' => 'hAOUIjvT',
 			'charset'  => 'utf8',
 			'prefix'   => '',
 		),
