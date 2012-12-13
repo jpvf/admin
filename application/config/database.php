@@ -63,12 +63,12 @@ return array(
 
 		'sqlite' => array(
 			'driver'   => 'sqlite',
-			'database' => 'application',
+			'database' => 'zetta',
 			'prefix'   => '',
 		),
 
 		'mysql' => array(
-			'driver'   => 'mysql',
+			'driver'   => 'sqlite',
 			'host'     => 'localhost',
 			'database' => 'zetta',
 			'username' => 'root',
